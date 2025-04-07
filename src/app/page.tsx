@@ -1,103 +1,111 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState } from "react";
+import { motion } from "framer-motion";
+
+const boxCount = 9;
+
+export default function Page() {
+  const [flashedBoxes, setFlashedBoxes] = useState<number[]>([]);
+  const [userSelection, setUserSelection] = useState<number[]>([]);
+  const [isFlashing, setIsFlashing] = useState(false);
+  const [showMessage, setShowMessage] = useState("");
+  const [activeBox, setActiveBox] = useState<number | null>(null);
+
+  const flashSequence = async () => {
+    setShowMessage("");
+    setUserSelection([]);
+    const count = Math.floor(Math.random() * 3) + 2;
+    const indexes: number[] = [];
+    while (indexes.length < count) {
+      const randomIndex = Math.floor(Math.random() * boxCount);
+      if (!indexes.includes(randomIndex)) indexes.push(randomIndex);
+    }
+
+    setIsFlashing(true);
+    for (let i = 0; i < indexes.length; i++) {
+      setActiveBox(indexes[i]);
+      await new Promise((res) => setTimeout(res, 600));
+      setActiveBox(null);
+      await new Promise((res) => setTimeout(res, 200));
+    }
+    setFlashedBoxes(indexes);
+    setIsFlashing(false);
+  };
+
+  const handleClick = (index: number) => {
+    if (isFlashing || userSelection.includes(index)) return;
+    const newSelection = [...userSelection, index];
+    setUserSelection(newSelection);
+
+    if (newSelection.length === flashedBoxes.length) {
+      const correct =
+        [...newSelection].sort().join(",") ===
+        [...flashedBoxes].sort().join(",");
+      setShowMessage(correct ? "🎉 You got it!" : "❌ Oops, try again.");
+    }
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen bg-gradient-to-br from-[#bebebe] to-[#b6d4e3] flex flex-col items-center justify-center px-4">
+      <motion.h1
+        className="text-3xl md:text-4xl font-bold text-gray-800 mb-8 text-center"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        Memory Flash Game
+      </motion.h1>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+      <div className="grid grid-cols-3 gap-4">
+        {[...Array(boxCount)].map((_, i) => {
+          let boxClasses =
+            "w-20 h-20 md:w-24 md:h-24 rounded-xl border cursor-pointer flex items-center justify-center transition-all ";
+
+          if (activeBox === i) {
+            boxClasses += "bg-blue-400 ";
+          } else if (userSelection.includes(i) && flashedBoxes.includes(i)) {
+            boxClasses += "bg-green-300 ";
+          } else if (userSelection.includes(i) && !flashedBoxes.includes(i)) {
+            boxClasses += "bg-red-300 ";
+          } else {
+            boxClasses += "bg-white hover:bg-blue-100 ";
+          }
+
+          if (isFlashing) {
+            boxClasses += "pointer-events-none ";
+          }
+
+          return (
+            <motion.div
+              key={i}
+              className={boxClasses}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => handleClick(i)}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          );
+        })}
+      </div>
+
+      <motion.button
+        onClick={flashSequence}
+        className="mt-10 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition"
+        whileTap={{ scale: 0.95 }}
+        disabled={isFlashing}
+      >
+        {isFlashing ? "Flashing..." : "Start"}
+      </motion.button>
+
+      {showMessage && (
+        <motion.p
+          className="mt-6 text-lg font-semibold text-gray-700"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4 }}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          {showMessage}
+        </motion.p>
+      )}
     </div>
   );
 }
