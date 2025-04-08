@@ -38,7 +38,7 @@ interface LeaderboardEntry {
   date: string;
 }
 
-const gamePage = () => {
+const GamePage = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [gameState, setGameState] = useState<GameState>("idle");
   const [score, setScore] = useState(0);
@@ -63,6 +63,12 @@ const gamePage = () => {
       isVisible: boolean;
     }[]
   >([]);
+
+  const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
+  const clearAllTimeouts = () => {
+    timeoutsRef.current.forEach(clearTimeout);
+    timeoutsRef.current = [];
+  };
 
   // Simple toast function replacement for shadcn/ui toast
   const showToast = (title: string, description: string) => {
@@ -112,6 +118,7 @@ const gamePage = () => {
 
   // Start the game
   const startGame = () => {
+    clearAllTimeouts();
     setGameState("flashing");
     setSelectedBoxes([]);
     setGameResult(null);
@@ -201,7 +208,19 @@ const gamePage = () => {
             date: new Date().toISOString().split("T")[0],
           };
 
-          const newLeaderboard = [...leaderboard, newEntry]
+          const existingIndex = leaderboard.findIndex(
+            (entry) => entry.name === "You",
+          );
+
+          let updatedLeaderboard = [...leaderboard];
+
+          if (existingIndex !== -1) {
+            updatedLeaderboard[existingIndex] = newEntry;
+          } else {
+            updatedLeaderboard.push(newEntry);
+          }
+
+          const newLeaderboard = updatedLeaderboard
             .sort((a, b) => b.score - a.score)
             .slice(0, 5);
 
@@ -225,6 +244,7 @@ const gamePage = () => {
 
   // Reset the game
   const resetGame = () => {
+    clearAllTimeouts();
     setGameState("idle");
     setScore(0);
     setLevel(1);
@@ -250,7 +270,7 @@ const gamePage = () => {
   return (
     <div
       className={`min-h-screen flex flex-col p-4 ${
-        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-300 text-gray-900"
       }`}
       style={{
         backgroundImage: darkMode
@@ -599,4 +619,4 @@ const gamePage = () => {
   );
 };
 
-export default gamePage;
+export default GamePage;
