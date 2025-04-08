@@ -344,187 +344,156 @@ const gamePage = () => {
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center gap-8">
-        <div
-          className={`flex flex-col items-center mb-6 ${
-            darkMode ? "bg-gray-800/60" : "bg-white/60"
-          } backdrop-blur-sm p-4 rounded-xl shadow-md`}
-        >
-          <div className="flex flex-wrap gap-6 items-center justify-center">
-            <div className="text-center">
-              <p className={`${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                Level
-              </p>
-              <p className="text-3xl font-bold">
-                {level} / {MAX_LEVEL}
-              </p>
+      <main className="flex flex-col lg:flex-row items-start justify-center gap-12 px-4 py-10 w-full max-w-7xl mx-auto">
+        <div className="w-full lg:w-1/2 space-y-6">
+          {/* Game stats container */}
+          <div
+            className={`flex flex-col items-center ${
+              darkMode ? "bg-gray-800/60" : "bg-white/60"
+            } backdrop-blur-sm p-6 rounded-2xl shadow-lg space-y-6`}
+          >
+            <div className="flex flex-wrap gap-6 justify-center">
+              {[
+                { label: "Level", value: `${level} / ${MAX_LEVEL}` },
+                { label: "Score", value: score },
+                { label: "High Score", value: highScore },
+                { label: "Boxes to Remember", value: 2 + level },
+              ].map((item, i) => (
+                <div key={i} className="text-center">
+                  <p className={darkMode ? "text-gray-400" : "text-gray-500"}>
+                    {item.label}
+                  </p>
+                  <p className="text-3xl font-bold">{item.value}</p>
+                </div>
+              ))}
             </div>
 
-            <div className="text-center">
-              <p className={`${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                Score
-              </p>
-              <p className="text-3xl font-bold">{score}</p>
-            </div>
-
-            <div className="text-center">
-              <p className={`${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                High Score
-              </p>
-              <p className="text-3xl font-bold">{highScore}</p>
-            </div>
-
-            <div className="text-center">
-              <p className={`${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-                Boxes to Remember
-              </p>
-              <p className="text-3xl font-bold">{2 + level}</p>
-            </div>
+            <AnimatePresence mode="wait">
+              {gameResult && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="flex items-center gap-2"
+                >
+                  {gameResult === "success" ? (
+                    <>
+                      <Check className="text-green-500 h-6 w-6" />
+                      <span className="text-xl font-semibold text-green-500">
+                        You got it!
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <X className="text-red-500 h-6 w-6" />
+                      <span className="text-xl font-semibold text-red-500">
+                        Oops, try again.
+                      </span>
+                    </>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          <AnimatePresence mode="wait">
-            {gameResult && (
+          {/* Game grid */}
+          <div
+            className={`grid grid-cols-4 gap-3 max-w-sm w-full mx-auto ${
+              darkMode ? "bg-gray-800/40" : "bg-white/40"
+            } backdrop-blur-sm p-6 rounded-2xl shadow-xl`}
+          >
+            {GAME_BOXES.map((box) => (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="mt-4 flex items-center gap-2"
-              >
-                {gameResult === "success" ? (
-                  <>
-                    <Check className="text-green-500 h-6 w-6" />
-                    <span className="text-xl font-semibold text-green-500">
-                      You got it!
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <X className="text-red-500 h-6 w-6" />
-                    <span className="text-xl font-semibold text-red-500">
-                      Oops, try again.
-                    </span>
-                  </>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        <div
-          className={`grid grid-cols-4 gap-3 max-w-sm w-full ${
-            darkMode ? "bg-gray-800/40" : "bg-white/40"
-          } backdrop-blur-sm p-6 rounded-xl shadow-lg`}
-        >
-          {GAME_BOXES.map((box) => (
-            <motion.div
-              key={box.id}
-              className={`aspect-square rounded-lg ${
-                box.color
-              } cursor-pointer shadow-md
-                ${
+                key={box.id}
+                className={`aspect-square rounded-md cursor-pointer shadow-md ${
+                  box.color
+                }
+          ${activeBox === box.id ? "ring-4 ring-white ring-opacity-70" : ""}
+          ${
+            selectedBoxes.includes(box.id) && gameState === "result"
+              ? gameResult === "success"
+                ? "ring-2 ring-green-500"
+                : "ring-2 ring-red-500"
+              : ""
+          }`}
+                onClick={() => handleBoxClick(box.id)}
+                whileHover={gameState === "userInput" ? { scale: 1.05 } : {}}
+                whileTap={gameState === "userInput" ? { scale: 0.95 } : {}}
+                animate={
                   activeBox === box.id
-                    ? "ring-4 ring-white ring-opacity-70"
-                    : ""
+                    ? {
+                        scale: [1, 1.1, 1],
+                        boxShadow: [
+                          "0px 0px 0px rgba(255,255,255,0)",
+                          "0px 0px 30px rgba(255,255,255,0.8)",
+                          "0px 0px 0px rgba(255,255,255,0)",
+                        ],
+                      }
+                    : {}
                 }
-                ${
-                  selectedBoxes.includes(box.id) && gameState === "result"
-                    ? gameResult === "success"
-                      ? "ring-2 ring-green-500"
-                      : "ring-2 ring-red-500"
-                    : ""
-                }
-              `}
-              onClick={() => handleBoxClick(box.id)}
-              whileHover={gameState === "userInput" ? { scale: 1.05 } : {}}
-              whileTap={gameState === "userInput" ? { scale: 0.95 } : {}}
-              animate={
-                activeBox === box.id
-                  ? {
-                      scale: [1, 1.1, 1],
-                      boxShadow: [
-                        "0px 0px 0px rgba(255,255,255,0)",
-                        "0px 0px 30px rgba(255,255,255,0.8)",
-                        "0px 0px 0px rgba(255,255,255,0)",
-                      ],
-                    }
-                  : {}
-              }
-              transition={{ duration: 0.5 }}
-            />
-          ))}
-        </div>
+                transition={{ duration: 0.5 }}
+              />
+            ))}
+          </div>
 
-        <div className="mt-6">
-          {gameState === "gameOver" ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="flex flex-col items-center gap-4"
-            >
+          {/* Start / Reset Button */}
+          <div className="mt-6 flex justify-center">
+            {gameState === "gameOver" ? (
               <motion.div
-                animate={{
-                  rotate: [0, 10, -10, 10, 0],
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  repeatType: "loop",
-                }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex flex-col items-center gap-5"
               >
-                <Award className="h-24 w-24 text-yellow-500" />
+                <motion.div
+                  animate={{ rotate: [0, 10, -10, 10, 0], scale: [1, 1.2, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  <Award className="h-20 w-20 text-yellow-500" />
+                </motion.div>
+                <h2 className="text-3xl font-bold text-yellow-500">
+                  🎉 You Win! 🎉
+                </h2>
+                <p className="text-center text-lg">
+                  You completed all {MAX_LEVEL} levels with {score} points!
+                </p>
+                <button
+                  onClick={resetGame}
+                  className="px-6 py-3 rounded-lg text-white bg-green-500 hover:bg-green-400 shadow-md transition-all flex items-center gap-2"
+                >
+                  <RotateCcw className="h-5 w-5" />
+                  Play Again
+                </button>
               </motion.div>
-              <h2 className="text-3xl font-bold text-center text-yellow-500">
-                🎉 You Win! 🎉
-              </h2>
-              <p className="text-center mb-4">
-                Congratulations! You've completed all {MAX_LEVEL} levels with a
-                score of {score}!
-              </p>
+            ) : (
               <button
-                onClick={resetGame}
-                className={`px-8 py-4 text-lg rounded-lg flex items-center gap-2 transition-colors
-                  ${
-                    darkMode
-                      ? "bg-green-600 hover:bg-green-500 text-white"
-                      : "bg-green-500 hover:bg-green-400 text-white"
-                  }
-                `}
+                disabled={gameState !== "idle"}
+                onClick={startGame}
+                className={`px-6 py-3 rounded-lg text-white shadow-md transition-all flex items-center gap-2
+            ${
+              darkMode
+                ? "bg-purple-600 hover:bg-purple-500"
+                : "bg-purple-500 hover:bg-purple-400"
+            }
+            ${
+              gameState !== "idle"
+                ? "opacity-50 cursor-not-allowed"
+                : "animate-bounce"
+            }
+          `}
               >
-                <RotateCcw className="h-5 w-5" />
-                Play Again
+                <Play className="h-5 w-5" />
+                {gameState === "idle" ? "Start Level " + level : "Playing..."}
               </button>
-            </motion.div>
-          ) : (
-            <button
-              disabled={gameState !== "idle"}
-              onClick={startGame}
-              className={`px-8 py-4 text-lg rounded-lg flex items-center gap-2 transition-colors
-                ${
-                  darkMode
-                    ? "bg-purple-600 hover:bg-purple-500 text-white"
-                    : "bg-purple-500 hover:bg-purple-400 text-white"
-                }
-                ${
-                  gameState !== "idle"
-                    ? "opacity-50 cursor-not-allowed"
-                    : "animate-bounce"
-                }
-              `}
-            >
-              <Play className="h-5 w-5" />
-              {gameState === "idle" ? "Start Level " + level : "Playing..."}
-            </button>
-          )}
+            )}
+          </div>
         </div>
 
-
- {/* Right side - Leaderboard */}
-        <div className="md:w-1/2 w-full max-w-md">
+        {/* Leaderboard Section */}
+        <div className="w-full lg:w-1/2 max-w-md">
           <div
             className={`${
               darkMode ? "bg-gray-800/90" : "bg-white/90"
-            } backdrop-blur-sm rounded-xl p-6 shadow-xl border ${
+            } backdrop-blur-sm rounded-2xl p-6 shadow-xl border ${
               darkMode ? "border-gray-700" : "border-gray-200"
             }`}
           >
@@ -533,6 +502,7 @@ const gamePage = () => {
               <h2 className="text-2xl font-bold">Leaderboard</h2>
             </div>
 
+            {/* Leaderboard entries */}
             <div className="mb-4 pb-4 border-b border-dashed border-gray-500/30">
               <p
                 className={`${
@@ -596,6 +566,7 @@ const gamePage = () => {
               </div>
             </div>
 
+            {/* Game Rules */}
             <div className="pt-2">
               <h3 className="font-semibold mb-2">Game Rules:</h3>
               <ul
