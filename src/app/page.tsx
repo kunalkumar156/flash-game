@@ -212,7 +212,7 @@ const GamePage = () => {
             (entry) => entry.name === "You",
           );
 
-          let updatedLeaderboard = [...leaderboard];
+          const updatedLeaderboard = [...leaderboard];
 
           if (existingIndex !== -1) {
             updatedLeaderboard[existingIndex] = newEntry;
