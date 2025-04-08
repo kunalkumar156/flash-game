@@ -346,56 +346,6 @@ const gamePage = () => {
 
       <main className="flex flex-col lg:flex-row items-start justify-center gap-12 px-4 py-10 w-full max-w-7xl mx-auto">
         <div className="w-full lg:w-1/2 space-y-6">
-          {/* Game stats container */}
-          <div
-            className={`flex flex-col items-center ${
-              darkMode ? "bg-gray-800/60" : "bg-white/60"
-            } backdrop-blur-sm p-6 rounded-2xl shadow-lg space-y-6`}
-          >
-            <div className="flex flex-wrap gap-6 justify-center">
-              {[
-                { label: "Level", value: `${level} / ${MAX_LEVEL}` },
-                { label: "Score", value: score },
-                { label: "High Score", value: highScore },
-                { label: "Boxes to Remember", value: 2 + level },
-              ].map((item, i) => (
-                <div key={i} className="text-center">
-                  <p className={darkMode ? "text-gray-400" : "text-gray-500"}>
-                    {item.label}
-                  </p>
-                  <p className="text-3xl font-bold">{item.value}</p>
-                </div>
-              ))}
-            </div>
-
-            <AnimatePresence mode="wait">
-              {gameResult && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="flex items-center gap-2"
-                >
-                  {gameResult === "success" ? (
-                    <>
-                      <Check className="text-green-500 h-6 w-6" />
-                      <span className="text-xl font-semibold text-green-500">
-                        You got it!
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <X className="text-red-500 h-6 w-6" />
-                      <span className="text-xl font-semibold text-red-500">
-                        Oops, try again.
-                      </span>
-                    </>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
           {/* Game grid */}
           <div
             className={`grid grid-cols-4 gap-3 max-w-sm w-full mx-auto ${
@@ -488,97 +438,149 @@ const gamePage = () => {
           </div>
         </div>
 
-        {/* Leaderboard Section */}
-        <div className="w-full lg:w-1/2 max-w-md">
+        <div className="flex flex-col gap-4 items-center">
+          {/* Game stats container */}
           <div
-            className={`${
-              darkMode ? "bg-gray-800/90" : "bg-white/90"
-            } backdrop-blur-sm rounded-2xl p-6 shadow-xl border ${
-              darkMode ? "border-gray-700" : "border-gray-200"
-            }`}
+            className={`w-full max-w-md flex flex-col items-center ${
+              darkMode ? "bg-gray-800/60" : "bg-white/60"
+            } backdrop-blur-sm p-6 rounded-2xl shadow-lg space-y-6`}
           >
-            <div className="flex items-center gap-3 mb-6">
-              <Trophy className="h-6 w-6 text-yellow-500" />
-              <h2 className="text-2xl font-bold">Leaderboard</h2>
+            <div className="flex flex-wrap gap-6 justify-center">
+              {[
+                { label: "Level", value: `${level}` },
+                { label: "Score", value: score },
+                { label: "High Score", value: highScore },
+                { label: "Boxes to Remember", value: 2 + level },
+              ].map((item, i) => (
+                <div key={i} className="text-center">
+                  <p className={darkMode ? "text-gray-400" : "text-gray-500"}>
+                    {item.label}
+                  </p>
+                  <p className="text-3xl font-bold">{item.value}</p>
+                </div>
+              ))}
             </div>
 
-            {/* Leaderboard entries */}
-            <div className="mb-4 pb-4 border-b border-dashed border-gray-500/30">
-              <p
-                className={`${
-                  darkMode ? "text-gray-400" : "text-gray-600"
-                } mb-2`}
-              >
-                Top Scores
-              </p>
-              <div className="overflow-hidden rounded-lg">
-                <div
-                  className={`grid grid-cols-3 text-sm font-medium p-2 ${
-                    darkMode ? "bg-gray-700/70" : "bg-gray-100/70"
-                  }`}
+            <AnimatePresence mode="wait">
+              {gameResult && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="flex items-center gap-2"
                 >
-                  <span>Name</span>
-                  <span className="text-center">Score</span>
-                  <span className="text-right">Date</span>
-                </div>
+                  {gameResult === "success" ? (
+                    <>
+                      <Check className="text-green-500 h-6 w-6" />
+                      <span className="text-xl font-semibold text-green-500">
+                        You got it!
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <X className="text-red-500 h-6 w-6" />
+                      <span className="text-xl font-semibold text-red-500">
+                        Oops, try again.
+                      </span>
+                    </>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
-                <div
+          {/* Leaderboard Section */}
+          <div className="w-full max-w-md">
+            <div
+              className={`${
+                darkMode ? "bg-gray-800/90" : "bg-white/90"
+              } backdrop-blur-sm rounded-2xl p-6 shadow-xl border ${
+                darkMode ? "border-gray-700" : "border-gray-200"
+              }`}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <Trophy className="h-6 w-6 text-yellow-500" />
+                <h2 className="text-2xl font-bold">Leaderboard</h2>
+              </div>
+
+              {/* Leaderboard entries */}
+              <div className="mb-4 pb-4 border-b border-dashed border-gray-500/30">
+                <p
                   className={`${
-                    darkMode ? "bg-gray-700/40" : "bg-gray-50/40"
-                  } divide-y ${
-                    darkMode ? "divide-gray-600/30" : "divide-gray-200/30"
-                  }`}
+                    darkMode ? "text-gray-400" : "text-gray-600"
+                  } mb-2`}
                 >
-                  {leaderboard.map((entry, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className={`grid grid-cols-3 py-3 px-2 ${
-                        entry.name === "You"
-                          ? darkMode
-                            ? "bg-gray-600/30"
-                            : "bg-blue-50/50"
-                          : ""
-                      }`}
-                    >
-                      <span
-                        className={`${
-                          entry.name === "You" ? "font-bold" : ""
-                        } ${
+                  Top Scores
+                </p>
+                <div className="overflow-hidden rounded-lg">
+                  <div
+                    className={`grid grid-cols-3 text-sm font-medium p-2 ${
+                      darkMode ? "bg-gray-700/70" : "bg-gray-100/70"
+                    }`}
+                  >
+                    <span>Name</span>
+                    <span className="text-center">Score</span>
+                    <span className="text-right">Date</span>
+                  </div>
+
+                  <div
+                    className={`${
+                      darkMode ? "bg-gray-700/40" : "bg-gray-50/40"
+                    } divide-y ${
+                      darkMode ? "divide-gray-600/30" : "divide-gray-200/30"
+                    }`}
+                  >
+                    {leaderboard.map((entry, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className={`grid grid-cols-3 py-3 px-2 ${
                           entry.name === "You"
                             ? darkMode
-                              ? "text-purple-300"
-                              : "text-purple-700"
+                              ? "bg-gray-600/30"
+                              : "bg-blue-50/50"
                             : ""
                         }`}
                       >
-                        {entry.name}
-                      </span>
-                      <span className="text-center">{entry.score}</span>
-                      <span className="text-right text-sm opacity-70">
-                        {entry.date}
-                      </span>
-                    </motion.div>
-                  ))}
+                        <span
+                          className={`${
+                            entry.name === "You" ? "font-bold" : ""
+                          } ${
+                            entry.name === "You"
+                              ? darkMode
+                                ? "text-purple-300"
+                                : "text-purple-700"
+                              : ""
+                          }`}
+                        >
+                          {entry.name}
+                        </span>
+                        <span className="text-center">{entry.score}</span>
+                        <span className="text-right text-sm opacity-70">
+                          {entry.date}
+                        </span>
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Game Rules */}
-            <div className="pt-2">
-              <h3 className="font-semibold mb-2">Game Rules:</h3>
-              <ul
-                className={`text-sm space-y-2 pl-6 ${
-                  darkMode ? "text-gray-300" : "text-gray-700"
-                } list-disc`}
-              >
-                <li>Watch which boxes flash</li>
-                <li>Click on the same boxes in any order</li>
-                <li>Each level adds more boxes to remember</li>
-                <li>Complete all 10 levels to win!</li>
-              </ul>
+              {/* Game Rules */}
+              <div className="pt-2">
+                <h3 className="font-semibold mb-2">Game Rules:</h3>
+                <ul
+                  className={`text-sm space-y-2 pl-6 ${
+                    darkMode ? "text-gray-300" : "text-gray-700"
+                  } list-disc`}
+                >
+                  <li>Watch which boxes flash</li>
+                  <li>Click on the same boxes in any order</li>
+                  <li>Each level adds more boxes to remember</li>
+                  <li>Complete all 10 levels to win!</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
