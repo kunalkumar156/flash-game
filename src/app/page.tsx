@@ -295,7 +295,7 @@ const gamePage = () => {
       </div>
 
       <header
-        className={`flex justify-between items-center mb-6 ${
+        className={`flex justify-between items-center mb-6 w-3/4 mx-auto ${
           darkMode ? "bg-gray-800/50" : "bg-white/50"
         } backdrop-blur-sm p-4 rounded-xl shadow-md`}
       >
@@ -306,11 +306,11 @@ const gamePage = () => {
             transition={{ duration: 0.5 }}
           >
             <h1
-              className={`text-3xl font-bold ${
+              className={`text-2xl font-bold ${
                 darkMode ? "text-purple-300" : "text-purple-600"
               }`}
             >
-              Memory Flash
+              FlashGame
             </h1>
           </motion.div>
         </div>
@@ -344,8 +344,8 @@ const gamePage = () => {
         </div>
       </header>
 
-      <main className="flex flex-col lg:flex-row items-start justify-center gap-12 px-4 py-10 w-full max-w-7xl mx-auto">
-        <div className="w-full lg:w-1/2 space-y-6">
+      <main className="flex flex-col lg:flex-row items-center justify-center gap-12 py-10 w-full max-w-2xl mx-auto">
+        <div className="w-full lg:w-1/2 space-y-8">
           {/* Game grid */}
           <div
             className={`grid grid-cols-4 gap-3 max-w-sm w-full mx-auto ${
@@ -392,25 +392,25 @@ const gamePage = () => {
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="flex flex-col items-center gap-5"
+                className="flex flex-col items-center gap-4"
               >
                 <motion.div
-                  animate={{ rotate: [0, 10, -10, 10, 0], scale: [1, 1.2, 1] }}
+                  animate={{ rotate: [0, 10, -10, 10, 0], scale: [1, 1.15, 1] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
-                  <Award className="h-20 w-20 text-yellow-500" />
+                  <Award className="h-14 w-14 text-yellow-400 drop-shadow-[0_1px_6px_rgba(0,0,0,0.2)]" />
                 </motion.div>
-                <h2 className="text-3xl font-bold text-yellow-500">
-                  🎉 You Win! 🎉
+                <h2 className="text-xl font-semibold text-yellow-400">
+                  You Win!
                 </h2>
-                <p className="text-center text-lg">
-                  You completed all {MAX_LEVEL} levels with {score} points!
+                <p className="text-sm text-center text-gray-400">
+                  All {MAX_LEVEL} levels cleared – {score} pts
                 </p>
                 <button
                   onClick={resetGame}
-                  className="px-6 py-3 rounded-lg text-white bg-green-500 hover:bg-green-400 shadow-md transition-all flex items-center gap-2"
+                  className="px-4 py-2 text-sm rounded-2xl text-white bg-purple-800/80 hover:bg-purple-600 transition-all shadow-[0_2px_10px_rgba(80,40,150,0.25)] flex items-center gap-2"
                 >
-                  <RotateCcw className="h-5 w-5" />
+                  <RotateCcw className="h-4 w-4" />
                   Play Again
                 </button>
               </motion.div>
@@ -418,21 +418,21 @@ const gamePage = () => {
               <button
                 disabled={gameState !== "idle"}
                 onClick={startGame}
-                className={`px-6 py-3 rounded-lg text-white shadow-md transition-all flex items-center gap-2
-            ${
-              darkMode
-                ? "bg-purple-600 hover:bg-purple-500"
-                : "bg-purple-500 hover:bg-purple-400"
-            }
-            ${
-              gameState !== "idle"
-                ? "opacity-50 cursor-not-allowed"
-                : "animate-bounce"
-            }
-          `}
+                className={`px-4 py-2 text-sm rounded-2xl text-white transition-all shadow-[0_2px_10px_rgba(80,40,150,0.25)] flex items-center gap-2
+        ${
+          darkMode
+            ? "bg-purple-700/80 hover:bg-purple-600"
+            : "bg-purple-500/80 hover:bg-purple-400"
+        }
+        ${
+          gameState !== "idle"
+            ? "opacity-50 cursor-not-allowed"
+            : "animate-bounce"
+        }
+      `}
               >
-                <Play className="h-5 w-5" />
-                {gameState === "idle" ? "Start Level " + level : "Playing..."}
+                <Play className="h-4 w-4" />
+                {gameState === "idle" ? `Start Lv ${level}` : "Playing..."}
               </button>
             )}
           </div>
@@ -443,20 +443,20 @@ const gamePage = () => {
           <div
             className={`w-full max-w-md flex flex-col items-center ${
               darkMode ? "bg-gray-800/60" : "bg-white/60"
-            } backdrop-blur-sm p-6 rounded-2xl shadow-lg space-y-6`}
+            } backdrop-blur-sm p-4 rounded-2xl shadow-lg space-y-4`}
           >
-            <div className="flex flex-wrap gap-6 justify-center">
+            <div className="flex flex-wrap gap-4 justify-center text-sm">
               {[
                 { label: "Level", value: `${level}` },
                 { label: "Score", value: score },
-                { label: "High Score", value: highScore },
-                { label: "Boxes to Remember", value: 2 + level },
+                { label: "High", value: highScore },
+                { label: "Boxes", value: 2 + level },
               ].map((item, i) => (
                 <div key={i} className="text-center">
                   <p className={darkMode ? "text-gray-400" : "text-gray-500"}>
                     {item.label}
                   </p>
-                  <p className="text-3xl font-bold">{item.value}</p>
+                  <p className="text-xl font-semibold">{item.value}</p>
                 </div>
               ))}
             </div>
@@ -467,20 +467,20 @@ const gamePage = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 text-sm"
                 >
                   {gameResult === "success" ? (
                     <>
-                      <Check className="text-green-500 h-6 w-6" />
-                      <span className="text-xl font-semibold text-green-500">
+                      <Check className="text-green-500 h-5 w-5" />
+                      <span className="font-medium text-green-500">
                         You got it!
                       </span>
                     </>
                   ) : (
                     <>
-                      <X className="text-red-500 h-6 w-6" />
-                      <span className="text-xl font-semibold text-red-500">
-                        Oops, try again.
+                      <X className="text-red-500 h-5 w-5" />
+                      <span className="font-medium text-red-500">
+                        Try again.
                       </span>
                     </>
                   )}
@@ -494,27 +494,27 @@ const gamePage = () => {
             <div
               className={`${
                 darkMode ? "bg-gray-800/90" : "bg-white/90"
-              } backdrop-blur-sm rounded-2xl p-6 shadow-xl border ${
+              } backdrop-blur-sm rounded-2xl p-4 shadow-xl border ${
                 darkMode ? "border-gray-700" : "border-gray-200"
               }`}
             >
-              <div className="flex items-center gap-3 mb-6">
-                <Trophy className="h-6 w-6 text-yellow-500" />
-                <h2 className="text-2xl font-bold">Leaderboard</h2>
+              <div className="flex items-center gap-2 mb-4">
+                <Trophy className="h-5 w-5 text-yellow-500" />
+                <h2 className="text-lg font-semibold">Leaderboard</h2>
               </div>
 
               {/* Leaderboard entries */}
-              <div className="mb-4 pb-4 border-b border-dashed border-gray-500/30">
+              <div className="mb-3 pb-3 border-b border-dashed border-gray-500/30">
                 <p
                   className={`${
                     darkMode ? "text-gray-400" : "text-gray-600"
-                  } mb-2`}
+                  } mb-2 text-xs`}
                 >
                   Top Scores
                 </p>
                 <div className="overflow-hidden rounded-lg">
                   <div
-                    className={`grid grid-cols-3 text-sm font-medium p-2 ${
+                    className={`grid grid-cols-3 text-xs font-medium p-2 ${
                       darkMode ? "bg-gray-700/70" : "bg-gray-100/70"
                     }`}
                   >
@@ -536,7 +536,7 @@ const gamePage = () => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className={`grid grid-cols-3 py-3 px-2 ${
+                        className={`grid grid-cols-3 py-2 px-2 text-sm ${
                           entry.name === "You"
                             ? darkMode
                               ? "bg-gray-600/30"
@@ -545,7 +545,7 @@ const gamePage = () => {
                         }`}
                       >
                         <span
-                          className={`${
+                          className={`truncate ${
                             entry.name === "You" ? "font-bold" : ""
                           } ${
                             entry.name === "You"
@@ -558,7 +558,7 @@ const gamePage = () => {
                           {entry.name}
                         </span>
                         <span className="text-center">{entry.score}</span>
-                        <span className="text-right text-sm opacity-70">
+                        <span className="text-right text-xs opacity-70">
                           {entry.date}
                         </span>
                       </motion.div>
@@ -568,17 +568,17 @@ const gamePage = () => {
               </div>
 
               {/* Game Rules */}
-              <div className="pt-2">
-                <h3 className="font-semibold mb-2">Game Rules:</h3>
+              <div className="pt-1">
+                <h3 className="font-semibold mb-1 text-sm">Rules:</h3>
                 <ul
-                  className={`text-sm space-y-2 pl-6 ${
+                  className={`text-xs space-y-1 pl-4 list-disc ${
                     darkMode ? "text-gray-300" : "text-gray-700"
-                  } list-disc`}
+                  }`}
                 >
-                  <li>Watch which boxes flash</li>
-                  <li>Click on the same boxes in any order</li>
-                  <li>Each level adds more boxes to remember</li>
-                  <li>Complete all 10 levels to win!</li>
+                  <li>Watch flashing boxes</li>
+                  <li>Click the same ones (any order)</li>
+                  <li>Each level adds more</li>
+                  <li>Finish all 10 levels to win</li>
                 </ul>
               </div>
             </div>
